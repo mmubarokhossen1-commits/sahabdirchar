@@ -508,6 +508,7 @@ function renderPeople(){
 }
 
 function openPerson(id){
+ history.pushState({appModal:"personModal"},"");
  selectedId=id;
  const person=people.find(p=>p.id===id);
  if(!person)return;
@@ -612,6 +613,7 @@ function savePerson(){
 }
 
 function openMonthly(type){
+ history.pushState({appModal:"monthlyModal"},"");
  const modal=document.getElementById("monthlyModal");
  const title=document.getElementById("monthlyTitle");
  const list=document.getElementById("monthlyList");
@@ -666,6 +668,7 @@ function openMonthly(type){
 }
 
 function openAdd(){
+ history.pushState({appModal:"addModal"},"");
  document.getElementById("newName").value="";
  document.getElementById("addModal").classList.add("show");
  setTimeout(()=>document.getElementById("newName").focus(),100);
@@ -712,14 +715,30 @@ function deletePerson(){
  renderPeople();
 }
 
-function closeModal(id){
- document.getElementById(id).classList.remove("show");
+function closeModal(id, fromBack=false){
+ const modal=document.getElementById(id);
+ if(modal) modal.classList.remove("show");
+
+ if(!fromBack && history.state && history.state.appModal===id){
+  history.back();
+ }
 }
 
 document.querySelectorAll(".modal").forEach(modal=>{
  modal.addEventListener("click",e=>{
-  if(e.target===modal)modal.classList.remove("show");
+  if(e.target===modal)closeModal(modal.id);
  });
+});
+
+// Android/WebView Back: আগে খোলা ক্যাটাগরি/মডাল বন্ধ হবে।
+// মূল পেজে থাকলে তারপর Back দিলে অ্যাপ থেকে বের হওয়ার স্বাভাবিক আচরণ থাকবে।
+history.replaceState({appRoot:true},"");
+window.addEventListener("popstate",function(){
+ const visible=[...document.querySelectorAll(".modal.show")];
+ if(visible.length){
+  const modal=visible[visible.length-1];
+  closeModal(modal.id,true);
+ }
 });
 
 function showAll(){
@@ -729,6 +748,7 @@ function showAll(){
 
 
 function openAllAccounts(){
+ history.pushState({appModal:"allAccountsModal"},"");
  renderAllAccounts();
  document.getElementById("allAccountsModal").classList.add("show");
 }
@@ -792,6 +812,7 @@ function setTodayDonationDate(){
 }
 
 function openDonations(){
+ history.pushState({appModal:"donationModal"},"");
  editingDonationId=null;
  document.getElementById("donationSaveBtn").textContent="＋ দানের হিসাব যোগ করুন";
  document.getElementById("donorName").value="";
@@ -934,4 +955,4 @@ setInterval(updateDateTime,1000);
 </script>
 
 </body>
- </html>
+   </html>
