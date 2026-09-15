@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#087f5b">
+<title>সাহাব্দীর চর বেপারী পাড়া</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+ margin:0;font-family:"Noto Sans Bengali","SolaimanLipi",Arial,sans-serif;
+ background:#f1f7f4;color:#17352c;
+}
+.header{
+ background:linear-gradient(135deg,#087f5b,#079b70);color:#fff;text-align:center;
+ padding:17px 12px 20px;box-shadow:0 3px 12px rgba(0,0,0,.15)
+}
+.header h1{margin:0;font-size:25px;font-weight:800}
+.header p{margin:6px 0;font-size:17px}
+.datetime{font-size:14px;margin-top:7px}
+.container{max-width:720px;margin:auto;padding:15px}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}
+.summary-box{
+ background:#fff;border-radius:17px;padding:15px 8px;text-align:center;
+ box-shadow:0 2px 9px rgba(0,0,0,.08);cursor:pointer
+}
+.summary-box:active{transform:scale(.98)}
+.icon{font-size:29px}
+.summary-box b{display:block;font-size:21px;margin-top:3px}
+.summary-box small{color:#697670;font-size:15px}
+.hint{display:block;margin-top:5px;font-size:11px;color:#087f5b}
+.controls{
+ background:#fff;padding:12px;border-radius:16px;margin-bottom:15px;
+ box-shadow:0 2px 9px rgba(0,0,0,.07)
+}
+.search{
+ width:100%;padding:13px;border:1px solid #d4e2dd;border-radius:12px;
+ font-size:16px;outline:none
+}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+button{border:0;border-radius:11px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
+.add{background:#087f5b;color:#fff}
+.all{background:#edf4f1;color:#087f5b}
+.person{
+ background:#fff;border-radius:16px;margin-bottom:10px;padding:14px;
+ display:flex;align-items:center;gap:8px;box-shadow:0 2px 9px rgba(0,0,0,.08)
+}
+.personmain{flex:1;cursor:pointer}
+.name{font-size:19px;font-weight:800;color:#123c31}
+.sub{font-size:13px;color:#74807b;margin-top:4px}
+.total{margin-top:6px;color:#087f5b;font-weight:700;font-size:14px}
+.arrow{color:#087f5b;font-size:29px}
+.empty{background:#fff;border-radius:16px;padding:30px;text-align:center;color:#777}
+
+.modal{
+ display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.57);
+ padding:12px;overflow:auto
+}
+.modal.show{display:flex;align-items:center;justify-content:center}
+.card{
+ background:#fff;width:100%;max-width:680px;max-height:95vh;overflow:auto;
+ border-radius:20px;padding:17px;box-shadow:0 10px 40px rgba(0,0,0,.3)
+}
+.title{font-size:22px;color:#087f5b;font-weight:800;margin-bottom:13px}
+.close{
+ float:right;width:37px;height:37px;border-radius:50%;padding:0;
+ background:#edf3f1;font-size:22px
+}
+.note{
+ background:#fff8dc;border-left:5px solid #e5b400;border-radius:9px;
+ padding:11px;font-size:13px;margin-bottom:12px
+}
+.grand{
+ background:#eef8f4;border-radius:13px;padding:12px;margin-bottom:12px;
+ font-weight:700;line-height:1.9
+}
+
+.month{
+ border:1px solid #d8e6e1;border-radius:14px;padding:12px;
+ margin-bottom:10px;background:#fbfdfc
+}
+.monthname{color:#087f5b;font-weight:800;font-size:18px;margin-bottom:10px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field span{display:block;font-size:12px;color:#687570;margin-bottom:4px}
+input[type="number"],input[type="text"],select{
+ width:100%;padding:11px;border:1px solid #cfded8;border-radius:10px;
+ font-size:16px;outline:none;background:#fff
+}
+.inputcheck{display:flex;align-items:center;gap:7px}
+.inputcheck input[type="number"]{flex:1}
+.tick{
+ width:52px;min-width:52px;height:52px;border:1px solid #cfded8;
+ border-radius:10px;display:flex;align-items:center;justify-content:center;
+ background:#f8fbfa;cursor:pointer
+}
+.tick input{width:22px;height:22px;accent-color:#087f5b}
+.statusText{display:block;margin-top:5px;color:#087f5b;font-weight:700;font-size:12px}
+.statusText.due{color:#c62828}
+.save{width:100%;margin-top:10px;background:#087f5b;color:#fff;font-size:16px}
+.edit{width:100%;margin-top:8px;background:#eaf1ff;color:#1455b8}
+.delete{width:100%;margin-top:8px;background:#ffe8e8;color:#c62828}
+
+.monthsummary{
+ border:1px solid #d9e6e1;background:#fbfdfc;border-radius:13px;
+ padding:12px;margin-bottom:9px
+}
+.mstitle{color:#087f5b;font-weight:800;font-size:17px;margin-bottom:7px}
+.msrow{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-top:5px;gap:8px}
+.badgepaid{color:#087f5b;background:#def6ea;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.badgedue{color:#c62828;background:#ffe4e4;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700}
+
+.donation-card{
+ background:#fff;border-radius:17px;padding:15px 12px;text-align:center;
+ box-shadow:0 2px 9px rgba(0,0,0,.08);cursor:pointer;grid-column:1 / -1
+}
+.donation-card:active{transform:scale(.98)}
+.allaccounts-card{background:#fff;border-radius:17px;padding:15px 12px;text-align:center;box-shadow:0 2px 9px rgba(0,0,0,.08);cursor:pointer}
+.allaccounts-card:active{transform:scale(.98)}
+.allaccounts-card .allaccounts-icon{font-size:30px}
+.allaccounts-card b{display:block;font-size:21px;margin-top:3px;color:#087f5b}
+.allaccounts-card small{color:#697670;font-size:15px}
+.allaccounts-card .hint{display:block;margin-top:5px;font-size:11px;color:#087f5b}
+.account-section{border:1px solid #d8e6e1;border-radius:14px;padding:12px;margin-bottom:10px;background:#fbfdfc}
+.account-section-title{color:#087f5b;font-weight:800;font-size:18px;margin-bottom:8px}
+.account-line{display:flex;justify-content:space-between;gap:8px;line-height:1.8;font-size:14px;border-bottom:1px dashed #dbe7e3;padding:5px 0}
+.account-line:last-child{border-bottom:0}
+.account-total{background:#eef8f4;border-radius:13px;padding:12px;margin-bottom:12px;font-weight:700;line-height:1.9}
+.donation-card .donation-icon{font-size:30px}
+.donation-card b{display:block;font-size:21px;margin-top:3px;color:#087f5b}
+.donation-card small{color:#697670;font-size:15px}
+.donation-card .hint{display:block;margin-top:5px;font-size:11px;color:#087f5b}
+.donation-item{
+ border:1px solid #d8e6e1;border-radius:14px;padding:13px;margin-bottom:10px;
+ background:#fbfdfc
+}
+.donation-item-head{
+ display:flex;justify-content:space-between;align-items:center;gap:8px;
+ margin-bottom:7px
+}
+.donation-name{font-size:18px;font-weight:800;color:#087f5b}
+.donation-amount{font-weight:800;color:#17352c}
+.donation-meta{font-size:13px;color:#66736e;line-height:1.8}
+.donation-purpose{font-size:15px;font-weight:700;color:#17352c;margin:5px 0}
+.donation-actions{display:flex;gap:7px;margin-top:9px}
+.donation-actions button{flex:1;padding:9px;font-size:13px}
+.donation-edit{background:#eaf1ff;color:#1455b8}
+.donation-delete{background:#ffe8e8;color:#c62828}
+.donation-total{
+ background:#eef8f4;border-radius:13px;padding:12px;margin-bottom:12px;
+ font-weight:700;line-height:1.9
+}
+.donation-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.donation-form-full{grid-column:1 / -1}
+.donation-label{display:block;font-size:13px;color:#5f6c67;margin:0 0 5px}
+.donation-form-grid textarea{
+ width:100%;min-height:82px;padding:11px;border:1px solid #cfded8;
+ border-radius:10px;font-size:15px;outline:none;resize:vertical
+}
+.donation-empty{
+ text-align:center;padding:25px 10px;color:#777;border:1px dashed #cfded8;
+ border-radius:13px
+}
+@media(max-width:430px){
+ .donation-form-grid{grid-template-columns:1fr}
+ .donation-form-full{grid-column:auto}
+}
+
+.footer{text-align:center;padding:20px;color:#77827e;font-size:13px}
+
+@media(max-width:430px){
+ .header h1{font-size:22px}
+ .fields{grid-template-columns:1fr 1fr}
+ .name{font-size:18px}
+ .msrow{align-items:flex-start}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+ <h1>সাহাব্দীর চর বেপারী পাড়া</h1>
+ <p>মুষ্ঠী চাউলের হিসাব</p>
+ <div class="datetime" id="datetime"></div>
+</header>
+
+<main class="container">
+
+ <div class="summary">
+  <div class="summary-box" onclick="openMonthly('money')">
+   <div class="icon">💰</div>
+   <b id="totalMoney">০</b>
+   <small>মোট টাকা</small>
+   <span class="hint">১২ মাসের হিসাব দেখতে চাপ দিন</span>
+  </div>
+
+  <div class="summary-box" onclick="openMonthly('rice')">
+   <div class="icon">🌾</div>
+   <b id="totalRice">০ কেজি</b>
+   <small>মোট চাউল</small>
+   <span class="hint">১২ মাসের হিসাব দেখতে চাপ দিন</span>
+  </div>
+
+  <div class="summary-box">
+   <div class="icon">👥</div>
+   <b id="totalPeople">০</b>
+   <small>মোট সদস্য</small>
+  </div>
+
+  <div class="allaccounts-card" onclick="openAllAccounts()">
+   <div class="allaccounts-icon">📚</div>
+   <b>সব হিসাব</b>
+   <small>সকল হিসাব</small>
+   <span class="hint">চাউল, টাকা ও অন্যান্য দান—সব হিসাব একসাথে দেখুন</span>
+  </div>
+
+  <div class="donation-card" onclick="openDonations()">
+   <div class="donation-icon">🤲</div>
+   <b id="totalDonations">০ টাকা</b>
+   <small>অন্যান্য দান</small>
+   <span class="hint">কে কত টাকা দিলেন ও কোন কাজের জন্য—সব হিসাব দেখতে চাপ দিন</span>
+  </div>
+
+  <!-- আগের ১২ মাসের আলাদা কার্ড রাখা হয়নি -->
+ </div>
+
+ <div class="controls">
+  <input class="search" id="search" type="search"
+   placeholder="নাম খুঁজুন..." oninput="renderPeople()">
+
+  <div class="btnrow">
+   <button class="add" onclick="openAdd()">＋ নতুন নাম যোগ</button>
+   <button class="all" onclick="showAll()">↩ সব নাম</button>
+  </div>
+ </div>
+
+ <div id="peopleList"></div>
+</main>
+
+<div class="footer">
+ সাহাব্দীর চর বেপারী পাড়া<br>
+ মুষ্ঠী চাউলের হিসাব
+</div>
+
+<!-- নতুন নাম -->
+<div class="modal" id="addModal">
+ <div class="card">
+  <button class="close" onclick="closeModal('addModal')">×</button>
+  <div class="title">নতুন নাম যোগ করুন</div>
+  <label>নাম</label>
+  <input id="newName" type="text" placeholder="নাম লিখুন">
+  <button class="save" onclick="addPerson()">＋ নাম যোগ করুন</button>
+ </div>
+</div>
+
+<!-- ব্যক্তির ১২ মাস -->
+<div class="modal" id="personModal">
+ <div class="card">
+  <button class="close" onclick="closeModal('personModal')">×</button>
+
+  <div class="title" id="personTitle"></div>
+
+  <div class="note">
+   যে মাসে টাকা বা চাউল দিয়েছেন, সেই মাসের ঘরে পরিমাণ লিখুন।
+   পরিমাণ দেওয়ার পর পাশে থাকা <b>✓</b> চিহ্নে চাপ দিলে
+   <b>পরিশোধ হয়েছে</b> দেখাবে। ✓ না দিলে <b>বাকি</b> থাকবে।
+  </div>
+
+  <div class="grand">
+   💰 মোট টাকা:
+   <span id="personMoney">০</span> টাকা
+   <br>
+   🌾 মোট চাউল:
+   <span id="personRice">০</span> কেজি চাউল
+  </div>
+
+  <div id="personMonths"></div>
+
+  <button class="save" onclick="savePerson()">💾 হিসাব সংরক্ষণ</button>
+  <button class="edit" onclick="renamePerson()">✏️ নাম পরিবর্তন</button>
+  <button class="delete" onclick="deletePerson()">🗑️ এই নাম মুছে দিন</button>
+ </div>
+</div>
+
+<!-- সব হিসাব -->
+<div class="modal" id="allAccountsModal">
+ <div class="card">
+  <button class="close" onclick="closeModal('allAccountsModal')">×</button>
+  <div class="title">📚 সব হিসাব</div>
+  <div class="account-total" id="allAccountsTotal"></div>
+  <div id="allAccountsList"></div>
+ </div>
+</div>
+
+<!-- অন্যান্য দানের হিসাব -->
+<div class="modal" id="donationModal">
+ <div class="card">
+  <button class="close" onclick="closeModal('donationModal')">×</button>
+  <div class="title">🤲 অন্যান্য দানের হিসাব</div>
+
+  <div class="note">
+   এখানে বিভিন্ন ধরনের দানের হিসাব লিখতে পারবেন—<b>কে কত টাকা দিলেন,
+   কোন কাজের জন্য দিলেন এবং কত তারিখে দিলেন</b>। প্রয়োজন হলে পরে সম্পাদনা
+   বা মুছেও দিতে পারবেন।
+  </div>
+
+  <div class="donation-total">
+   💰 মোট অন্যান্য দান: <span id="donationGrandTotal">০</span> টাকা
+  </div>
+
+  <div class="donation-form-grid">
+   <div>
+    <label class="donation-label">দাতার নাম</label>
+    <input id="donorName" type="text" placeholder="যিনি দান করেছেন">
+   </div>
+
+   <div>
+    <label class="donation-label">দানের টাকা</label>
+    <input id="donationAmount" type="number" min="0" step="0.01"
+     inputmode="decimal" placeholder="কত টাকা">
+   </div>
+
+   <div>
+    <label class="donation-label">তারিখ</label>
+    <input id="donationDate" type="date">
+   </div>
+
+   <div>
+    <label class="donation-label">কাজ/উদ্দেশ্য</label>
+    <input id="donationPurpose" type="text" placeholder="যেমন: মসজিদ, মাহফিল, অসহায় ব্যক্তি">
+   </div>
+
+   <div class="donation-form-full">
+    <label class="donation-label">অতিরিক্ত মন্তব্য (ইচ্ছা হলে)</label>
+    <textarea id="donationNote" placeholder="দানের বিষয়ে অন্য কোনো তথ্য লিখুন"></textarea>
+   </div>
+  </div>
+
+  <button class="save" id="donationSaveBtn" onclick="saveDonation()">＋ দানের হিসাব যোগ করুন</button>
+
+  <div style="height:12px"></div>
+  <div id="donationList"></div>
+ </div>
+</div>
+
+<!-- মোট টাকা/চাউলের ১২ মাসের ক্যাটাগরি -->
+<div class="modal" id="monthlyModal">
+ <div class="card">
+  <button class="close" onclick="closeModal('monthlyModal')">×</button>
+  <div class="title" id="monthlyTitle">১২ মাসের হিসাব</div>
+  <div class="grand" id="monthlyGrand"></div>
+  <div id="monthlyList"></div>
+ </div>
+</div>
+
+<script>
+const months=[
+ "জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন",
+ "জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"
+];
+
+const initialNames=[
+"নবের","নুরআলী","উসমান","মনি","নুরআলম","জাবুল","আমির","পক্কা",
+"মারুফ","ফজুল","সাজল","ইসমাইল","মোরছালিন","বগলা","গদা","রাসেল",
+"নজরুল","তরজুল","বক্কর","ইসা সালী","ছিদ্দিক","হানি","মিজান","হজ",
+"বাদশা","নুরআলী","মেনা","মালেক","সুরুজ","সিরাজ","জিয়েল","বেলাল",
+"সোবহান","মুস্তাকিম","রফিকুল","জাহাঙ্গীর","মজিবর","লেকত","উসমান",
+"মুনছুর","মুতালেব","নেছা","সবিজল","সামিদুল","শফি","গোলাপ","ইলিয়াছ",
+"মনু","আবু","মুনা","নুরমিয়া","মস্তফা","লালমিয়া","ইসমাইল","সুন্দর",
+"মুকুল","এমদাদুল","হজ","ফারুক","হক্ক","ফকির","হয়বর","শাহিদুল",
+"নজি","নুরআলী","নুরনবী","সুরুজ","মুকুল","মিস্টার","আলিনুর","আমিনুর",
+"ইদুল","আ:রহিম","সাইফুল","হাবি","এরশাদ","আশাদুল","হাবি","আক্কাস",
+"আব্বাস","দ্বিনইসলাম","আন্তাজ","আক্তার","ইয়াছিন","মজমু","সদাই","সদু",
+"মজিবর","জহুরুল","মজিবর","শফিকুল","মুর্শেদ","ছিয়াব্বর","গামা","বস্ক",
+"মিরজাআলী","আবুসামা","বেলাল","আজিত","আকিমুল"
+];
+
+let people=JSON.parse(localStorage.getItem("sahabdierCharPeople")||"null");
+let donations=JSON.parse(localStorage.getItem("sahabdierCharDonations")||"[]");
+let selectedId=null;
+let editingDonationId=null;
+
+function createPerson(name,index){
+ return {
+  id:Date.now()+index+Math.floor(Math.random()*10000),
+  name:name,
+  months:months.map(()=>({
+   money:"",
+   rice:"",
+   moneyPaid:false,
+   ricePaid:false
+  }))
+ };
+}
+
+function normalizePeople(){
+ if(!Array.isArray(donations)) donations=[];
+ if(!people){
+  people=initialNames.map((name,index)=>createPerson(name,index));
+  saveAll();
+  return;
+ }
+
+ people.forEach(person=>{
+  if(!Array.isArray(person.months)) person.months=[];
+
+  months.forEach((m,i)=>{
+   if(!person.months[i] || typeof person.months[i]!=="object"){
+    person.months[i]={
+     money:"",
+     rice:"",
+     moneyPaid:false,
+     ricePaid:false
+    };
+   }
+   if(person.months[i].moneyPaid===undefined) person.months[i].moneyPaid=false;
+   if(person.months[i].ricePaid===undefined) person.months[i].ricePaid=false;
+   if(person.months[i].money===undefined) person.months[i].money="";
+   if(person.months[i].rice===undefined) person.months[i].rice="";
+  });
+ });
+ saveAll();
+}
+
+function saveAll(){
+ localStorage.setItem("sahabdierCharPeople",JSON.stringify(people));
+ localStorage.setItem("sahabdierCharDonations",JSON.stringify(donations));
+}
+
+function num(v){
+ const n=parseFloat(v);
+ return isNaN(n)?0:n;
+}
+
+function formatNumber(v){
+ if(Number.isInteger(v)) return String(v);
+ return v.toFixed(2).replace(/\.00$/,"");
+}
+
+function bn(v){
+ return String(v)
+ .replace(/0/g,"০").replace(/1/g,"১").replace(/2/g,"২")
+ .replace(/3/g,"৩").replace(/4/g,"৪").replace(/5/g,"৫")
+ .replace(/6/g,"৬").replace(/7/g,"৭").replace(/8/g,"৮")
+ .replace(/9/g,"৯");
+}
+
+function escapeHtml(text){
+ return String(text)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;").replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+}
+
+function totals(person){
+ let money=0,rice=0;
+ person.months.forEach(m=>{
+  money+=num(m.money);
+  rice+=num(m.rice);
+ });
+ return {money,rice};
+}
+
+function renderPeople(){
+ const list=document.getElementById("peopleList");
+ const search=document.getElementById("search").value.trim().toLowerCase();
+
+ const filtered=people.filter(p=>p.name.toLowerCase().includes(search));
+
+ let totalMoney=0,totalRice=0;
+ people.forEach(p=>{
+  const t=totals(p);
+  totalMoney+=t.money;
+  totalRice+=t.rice;
+ });
+
+ document.getElementById("totalPeople").textContent=bn(people.length);
+ document.getElementById("totalMoney").textContent=bn(formatNumber(totalMoney));
+ document.getElementById("totalRice").textContent=bn(formatNumber(totalRice))+" কেজি";
+
+ const donationTotal=donations.reduce((sum,d)=>sum+num(d.amount),0);
+ const donationEl=document.getElementById("totalDonations");
+ if(donationEl) donationEl.textContent=bn(formatNumber(donationTotal))+" টাকা";
+
+ if(!filtered.length){
+  list.innerHTML='<div class="empty">😔 কোনো নাম পাওয়া যায়নি</div>';
+  return;
+ }
+
+ list.innerHTML=filtered.map(p=>{
+  const t=totals(p);
+  return `
+   <div class="person">
+    <div class="personmain" onclick="openPerson(${p.id})">
+     <div class="name">${escapeHtml(p.name)}</div>
+     <div class="sub">১২ মাসের হিসাব দেখতে নামের ওপর চাপ দিন</div>
+     <div class="total">
+      💰 ${bn(formatNumber(t.money))} টাকা
+      &nbsp; | &nbsp;
+      🌾 ${bn(formatNumber(t.rice))} কেজি চাউল
+     </div>
+    </div>
+    <div class="arrow" onclick="openPerson(${p.id})">›</div>
+   </div>
+  `;
+ }).join("");
+}
+
+function openPerson(id){
+ selectedId=id;
+ const person=people.find(p=>p.id===id);
+ if(!person)return;
+
+ document.getElementById("personTitle").textContent=person.name+" — ১২ মাসের হিসাব";
+ renderPersonMonths(person);
+ document.getElementById("personModal").classList.add("show");
+}
+
+function renderPersonMonths(person){
+ const box=document.getElementById("personMonths");
+
+ box.innerHTML=months.map((month,i)=>{
+  const m=person.months[i]||{money:"",rice:"",moneyPaid:false,ricePaid:false};
+
+  return `
+   <div class="month">
+    <div class="monthname">${bn(i+1)}. ${month}</div>
+
+    <div class="fields">
+
+     <div class="field">
+      <span>💰 টাকা</span>
+      <div class="inputcheck">
+       <input id="money_${i}" type="number" min="0" step="0.01"
+        inputmode="decimal" placeholder="টাকা" value="${m.money||""}">
+       <label class="tick" title="টাকা পরিশোধ হয়েছে">
+        <input id="moneyPaid_${i}" type="checkbox" ${m.moneyPaid?"checked":""}>
+       </label>
+      </div>
+      <small class="statusText ${m.moneyPaid?"":"due"}" id="moneyStatus_${i}">
+       ${m.moneyPaid?"✓ পরিশোধ হয়েছে":"○ বাকি"}
+      </small>
+     </div>
+
+     <div class="field">
+      <span>🌾 চাউল</span>
+      <div class="inputcheck">
+       <input id="rice_${i}" type="number" min="0" step="0.01"
+        inputmode="decimal" placeholder="কেজি" value="${m.rice||""}">
+       <label class="tick" title="চাউল পরিশোধ হয়েছে">
+        <input id="ricePaid_${i}" type="checkbox" ${m.ricePaid?"checked":""}>
+       </label>
+      </div>
+      <small class="statusText ${m.ricePaid?"":"due"}" id="riceStatus_${i}">
+       ${m.ricePaid?"✓ পরিশোধ হয়েছে":"○ বাকি"}
+      </small>
+     </div>
+
+    </div>
+   </div>
+  `;
+ }).join("");
+
+ months.forEach((m,i)=>{
+  document.getElementById("money_"+i).addEventListener("input",previewPerson);
+  document.getElementById("rice_"+i).addEventListener("input",previewPerson);
+
+  document.getElementById("moneyPaid_"+i).addEventListener("change",function(){
+   const el=document.getElementById("moneyStatus_"+i);
+   el.textContent=this.checked?"✓ পরিশোধ হয়েছে":"○ বাকি";
+   el.classList.toggle("due",!this.checked);
+  });
+
+  document.getElementById("ricePaid_"+i).addEventListener("change",function(){
+   const el=document.getElementById("riceStatus_"+i);
+   el.textContent=this.checked?"✓ পরিশোধ হয়েছে":"○ বাকি";
+   el.classList.toggle("due",!this.checked);
+  });
+ });
+
+ previewPerson();
+}
+
+function previewPerson(){
+ let money=0,rice=0;
+ months.forEach((m,i)=>{
+  money+=num(document.getElementById("money_"+i)?.value);
+  rice+=num(document.getElementById("rice_"+i)?.value);
+ });
+ document.getElementById("personMoney").textContent=bn(formatNumber(money));
+ document.getElementById("personRice").textContent=bn(formatNumber(rice));
+}
+
+function savePerson(){
+ const person=people.find(p=>p.id===selectedId);
+ if(!person)return;
+
+ months.forEach((m,i)=>{
+  person.months[i]={
+   money:document.getElementById("money_"+i).value.trim(),
+   rice:document.getElementById("rice_"+i).value.trim(),
+   moneyPaid:document.getElementById("moneyPaid_"+i).checked,
+   ricePaid:document.getElementById("ricePaid_"+i).checked
+  };
+ });
+
+ saveAll();
+ renderPeople();
+ if(document.getElementById("allAccountsModal")?.classList.contains("show")) renderAllAccounts();
+ alert("হিসাব সফলভাবে সংরক্ষণ হয়েছে।");
+}
+
+function openMonthly(type){
+ const modal=document.getElementById("monthlyModal");
+ const title=document.getElementById("monthlyTitle");
+ const list=document.getElementById("monthlyList");
+ const grand=document.getElementById("monthlyGrand");
+
+ title.textContent=type==="money"
+  ?"💰 মোট টাকার ১২ মাসের হিসাব"
+  :"🌾 মোট চাউলের ১২ মাসের হিসাব";
+
+ let grandTotal=0;
+
+ list.innerHTML=months.map((month,i)=>{
+  let total=0,paidCount=0,dueCount=0;
+
+  people.forEach(person=>{
+   const m=person.months[i];
+   if(type==="money"){
+    total+=num(m.money);
+    if(m.money){m.moneyPaid?paidCount++:dueCount++;}
+   }else{
+    total+=num(m.rice);
+    if(m.rice){m.ricePaid?paidCount++:dueCount++;}
+   }
+  });
+
+  grandTotal+=total;
+
+  return `
+   <div class="monthsummary">
+    <div class="mstitle">${bn(i+1)}. ${month}</div>
+    <div class="msrow">
+     <span>${type==="money"?"💰 মোট টাকা":"🌾 মোট চাউল"}</span>
+     <b>${bn(formatNumber(total))} ${type==="money"?"টাকা":"কেজি চাউল"}</b>
+    </div>
+    <div class="msrow">
+     <span>পরিশোধ হয়েছে: ${bn(paidCount)} জন</span>
+     <span class="badgepaid">✓ পরিশোধ হয়েছে</span>
+    </div>
+    <div class="msrow">
+     <span>বাকি: ${bn(dueCount)} জন</span>
+     <span class="badgedue">○ বাকি</span>
+    </div>
+   </div>
+  `;
+ }).join("");
+
+ grand.innerHTML=type==="money"
+  ?`💰 ১২ মাসে মোট টাকা: <b>${bn(formatNumber(grandTotal))} টাকা</b>`
+  :`🌾 ১২ মাসে মোট চাউল: <b>${bn(formatNumber(grandTotal))} কেজি চাউল</b>`;
+
+ modal.classList.add("show");
+}
+
+function openAdd(){
+ document.getElementById("newName").value="";
+ document.getElementById("addModal").classList.add("show");
+ setTimeout(()=>document.getElementById("newName").focus(),100);
+}
+
+function addPerson(){
+ const input=document.getElementById("newName");
+ const name=input.value.trim();
+
+ if(!name){alert("নাম লিখুন।");return;}
+
+ people.push(createPerson(name,people.length));
+ saveAll();
+ closeModal("addModal");
+ renderPeople();
+}
+
+function renamePerson(){
+ const person=people.find(p=>p.id===selectedId);
+ if(!person)return;
+
+ const name=prompt("নতুন নাম লিখুন:",person.name);
+ if(name===null)return;
+
+ if(!name.trim()){alert("নাম খালি রাখা যাবে না।");return;}
+
+ person.name=name.trim();
+ saveAll();
+
+ document.getElementById("personTitle").textContent=person.name+" — ১২ মাসের হিসাব";
+ renderPeople();
+}
+
+function deletePerson(){
+ const person=people.find(p=>p.id===selectedId);
+ if(!person)return;
+
+ if(!confirm('"'+person.name+'" -কে মুছে দিতে চান?\n\nতার ১২ মাসের হিসাবও মুছে যাবে।'))return;
+
+ people=people.filter(p=>p.id!==selectedId);
+ saveAll();
+ selectedId=null;
+ closeModal("personModal");
+ renderPeople();
+}
+
+function closeModal(id){
+ document.getElementById(id).classList.remove("show");
+}
+
+document.querySelectorAll(".modal").forEach(modal=>{
+ modal.addEventListener("click",e=>{
+  if(e.target===modal)modal.classList.remove("show");
+ });
+});
+
+function showAll(){
+ document.getElementById("search").value="";
+ renderPeople();
+}
+
+
+function openAllAccounts(){
+ renderAllAccounts();
+ document.getElementById("allAccountsModal").classList.add("show");
+}
+
+function renderAllAccounts(){
+ const list=document.getElementById("allAccountsList");
+ let totalMoney=0,totalRice=0;
+ people.forEach(p=>{const t=totals(p);totalMoney+=t.money;totalRice+=t.rice;});
+ const donationTotal=donations.reduce((s,d)=>s+num(d.amount),0);
+
+ document.getElementById("allAccountsTotal").innerHTML=
+  "👥 মোট সদস্য: <b>"+bn(people.length)+"</b><br>"+
+  "💰 মুষ্ঠী চাউলের মোট টাকা: <b>"+bn(formatNumber(totalMoney))+" টাকা</b><br>"+
+  "🌾 মুষ্ঠী চাউলের মোট চাউল: <b>"+bn(formatNumber(totalRice))+" কেজি চাউল</b><br>"+
+  "🤲 অন্যান্য দান: <b>"+bn(formatNumber(donationTotal))+" টাকা</b>";
+
+ let out=`<div class="account-section"><div class="account-section-title">👥 সদস্যদের হিসাব</div>`;
+ if(!people.length){
+  out+=`<div class="donation-empty">কোনো সদস্য নেই।</div>`;
+ }else{
+  people.forEach(p=>{
+   const t=totals(p);
+   out+=`<div style="padding:8px 0;border-bottom:1px solid #e1ebe7">
+    <div class="account-line"><strong>${escapeHtml(p.name)}</strong><span>💰 ${bn(formatNumber(t.money))} টাকা</span></div>
+    <div class="account-line"><span>🌾 ${bn(formatNumber(t.rice))} কেজি চাউল</span><span></span></div>
+   </div>`;
+  });
+ }
+ out+=`</div>`;
+
+ out+=`<div class="account-section"><div class="account-section-title">📅 ১২ মাসের মোট হিসাব</div>`;
+ months.forEach((month,i)=>{
+  let money=0,rice=0;
+  people.forEach(p=>{money+=num(p.months[i].money);rice+=num(p.months[i].rice);});
+  out+=`<div class="account-line"><strong>${bn(i+1)}. ${month}</strong><span>💰 ${bn(formatNumber(money))} টাকা | 🌾 ${bn(formatNumber(rice))} কেজি</span></div>`;
+ });
+ out+=`</div>`;
+
+ out+=`<div class="account-section"><div class="account-section-title">🤲 অন্যান্য দানের হিসাব</div>`;
+ if(!donations.length){
+  out+=`<div class="donation-empty">কোনো অন্যান্য দানের হিসাব নেই।</div>`;
+ }else{
+  [...donations].sort((a,b)=>String(b.date).localeCompare(String(a.date))).forEach(d=>{
+   out+=`<div style="padding:8px 0;border-bottom:1px solid #e1ebe7">
+    <div class="account-line"><strong>${escapeHtml(d.donor)}</strong><span>💰 ${bn(formatNumber(num(d.amount)))} টাকা</span></div>
+    <div class="account-line"><span>কাজ: ${escapeHtml(d.purpose)}</span><span>📅 ${formatDonationDate(d.date)}</span></div>
+    ${d.note?`<div style="font-size:13px;color:#66736e">📝 ${escapeHtml(d.note)}</div>`:""}
+   </div>`;
+  });
+ }
+ out+=`</div>`;
+ list.innerHTML=out;
+}
+
+function setTodayDonationDate(){
+ const d=new Date();
+ const y=d.getFullYear();
+ const m=String(d.getMonth()+1).padStart(2,"0");
+ const day=String(d.getDate()).padStart(2,"0");
+ document.getElementById("donationDate").value=`${y}-${m}-${day}`;
+}
+
+function openDonations(){
+ editingDonationId=null;
+ document.getElementById("donationSaveBtn").textContent="＋ দানের হিসাব যোগ করুন";
+ document.getElementById("donorName").value="";
+ document.getElementById("donationAmount").value="";
+ document.getElementById("donationPurpose").value="";
+ document.getElementById("donationNote").value="";
+ setTodayDonationDate();
+ renderDonations();
+ document.getElementById("donationModal").classList.add("show");
+}
+
+function saveDonation(){
+ const donor=document.getElementById("donorName").value.trim();
+ const amount=document.getElementById("donationAmount").value.trim();
+ const date=document.getElementById("donationDate").value;
+ const purpose=document.getElementById("donationPurpose").value.trim();
+ const note=document.getElementById("donationNote").value.trim();
+
+ if(!donor){alert("দাতার নাম লিখুন।");return;}
+ if(!amount || num(amount)<=0){alert("দানের টাকার পরিমাণ লিখুন।");return;}
+ if(!date){alert("দানের তারিখ নির্বাচন করুন।");return;}
+ if(!purpose){alert("কোন কাজের জন্য দান করেছেন তা লিখুন।");return;}
+
+ if(editingDonationId!==null){
+  const d=donations.find(x=>x.id===editingDonationId);
+  if(d){
+   d.donor=donor;
+   d.amount=amount;
+   d.date=date;
+   d.purpose=purpose;
+   d.note=note;
+  }
+ }else{
+  donations.unshift({
+   id:Date.now()+Math.floor(Math.random()*10000),
+   donor,amount,date,purpose,note
+  });
+ }
+
+ saveAll();
+ editingDonationId=null;
+ document.getElementById("donationSaveBtn").textContent="＋ দানের হিসাব যোগ করুন";
+ document.getElementById("donorName").value="";
+ document.getElementById("donationAmount").value="";
+ document.getElementById("donationPurpose").value="";
+ document.getElementById("donationNote").value="";
+ setTodayDonationDate();
+ renderDonations();
+ renderPeople();
+}
+
+function renderDonations(){
+ const list=document.getElementById("donationList");
+ const total=donations.reduce((sum,d)=>sum+num(d.amount),0);
+ document.getElementById("donationGrandTotal").textContent=bn(formatNumber(total));
+
+ if(!donations.length){
+  list.innerHTML='<div class="donation-empty">এখনও কোনো অন্যান্য দানের হিসাব যোগ করা হয়নি।</div>';
+  return;
+ }
+
+ const sorted=[...donations].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+
+ list.innerHTML=sorted.map(d=>`
+  <div class="donation-item">
+   <div class="donation-item-head">
+    <div class="donation-name">${escapeHtml(d.donor)}</div>
+    <div class="donation-amount">💰 ${bn(formatNumber(num(d.amount)))} টাকা</div>
+   </div>
+   <div class="donation-purpose">কাজ: ${escapeHtml(d.purpose)}</div>
+   <div class="donation-meta">
+    📅 তারিখ: ${formatDonationDate(d.date)}
+    ${d.note ? `<br>📝 ${escapeHtml(d.note)}` : ""}
+   </div>
+   <div class="donation-actions">
+    <button class="donation-edit" onclick="editDonation(${d.id})">✏️ সম্পাদনা</button>
+    <button class="donation-delete" onclick="deleteDonation(${d.id})">🗑️ মুছুন</button>
+   </div>
+  </div>
+ `).join("");
+}
+
+function formatDonationDate(dateString){
+ if(!dateString)return "";
+ const p=String(dateString).split("-");
+ if(p.length!==3)return escapeHtml(dateString);
+ return bn(p[2])+"-"+bn(p[1])+"-"+bn(p[0]);
+}
+
+function editDonation(id){
+ const d=donations.find(x=>x.id===id);
+ if(!d)return;
+
+ editingDonationId=id;
+ document.getElementById("donorName").value=d.donor||"";
+ document.getElementById("donationAmount").value=d.amount||"";
+ document.getElementById("donationDate").value=d.date||"";
+ document.getElementById("donationPurpose").value=d.purpose||"";
+ document.getElementById("donationNote").value=d.note||"";
+ document.getElementById("donationSaveBtn").textContent="💾 পরিবর্তন সংরক্ষণ করুন";
+
+ const card=document.querySelector("#donationModal .card");
+ if(card)card.scrollTop=0;
+}
+
+function deleteDonation(id){
+ const d=donations.find(x=>x.id===id);
+ if(!d)return;
+
+ if(!confirm(d.donor+" -এর "+formatNumber(num(d.amount))+" টাকার দানের হিসাব মুছে দিতে চান?"))return;
+
+ donations=donations.filter(x=>x.id!==id);
+ saveAll();
+ if(document.getElementById("allAccountsModal")?.classList.contains("show")) renderAllAccounts();
+ if(editingDonationId===id)editingDonationId=null;
+ renderDonations();
+ renderPeople();
+}
+
+function updateDateTime(){
+ const now=new Date();
+ let h=now.getHours();
+ const minute=String(now.getMinutes()).padStart(2,"0");
+ const second=String(now.getSeconds()).padStart(2,"0");
+ const ampm=h>=12?"PM":"AM";
+ h=h%12||12;
+
+ const date=now.toLocaleDateString("bn-BD",{
+  weekday:"long",year:"numeric",month:"long",day:"numeric"
+ });
+
+ document.getElementById("datetime").textContent=
+  "🕐 "+h+":"+minute+":"+second+" "+ampm+"  •  📅 "+date;
+}
+
+normalizePeople();
+renderPeople();
+updateDateTime();
+setInterval(updateDateTime,1000);
+</script>
+
+</body>
+</html>
