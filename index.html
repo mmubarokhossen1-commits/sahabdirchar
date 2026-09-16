@@ -51,6 +51,10 @@ button{border:0;border-radius:11px;padding:12px;font-size:15px;font-weight:700;c
 .sub{font-size:13px;color:#74807b;margin-top:4px}
 .total{margin-top:6px;color:#087f5b;font-weight:700;font-size:14px}
 .arrow{color:#087f5b;font-size:29px}
+.personstatus{margin-top:9px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px;font-size:10px;font-weight:700}
+.monthstatus{padding:5px 4px;border-radius:9px;background:#f1f5f3;color:#555;text-align:center;line-height:1.35}
+.monthstatus .paid{color:#087f5b}
+.monthstatus .due{color:#c62828}
 .empty{background:#fff;border-radius:16px;padding:30px;text-align:center;color:#777}
 
 .modal{
@@ -499,9 +503,14 @@ function renderPeople(){
       💰 ${bn(formatNumber(t.money))} টাকা
       &nbsp; | &nbsp;
       🌾 ${bn(formatNumber(t.rice))} কেজি চাউল
+     </div>      <div class="personstatus">
+       ${months.map((month,i)=>{
+        const m=p.months[i]||{};
+        return `<div class="monthstatus">${month}<br><span class="${m.moneyPaid?'paid':'due'}">💰${m.moneyPaid?'✓':'○'}</span> <span class="${m.ricePaid?'paid':'due'}">🌾${m.ricePaid?'✓':'○'}</span></div>`;
+       }).join('')}
+      </div>
      </div>
-    </div>
-    <div class="arrow" onclick="openPerson(${p.id})">›</div>
+     <div class="arrow" onclick="openPerson(${p.id})">›</div>
    </div>
   `;
  }).join("");
@@ -613,7 +622,6 @@ function savePerson(){
 }
 
 function openMonthly(type){
- history.pushState({appModal:"monthlyModal"},"");
  const modal=document.getElementById("monthlyModal");
  const title=document.getElementById("monthlyTitle");
  const list=document.getElementById("monthlyList");
@@ -718,7 +726,6 @@ function deletePerson(){
 function closeModal(id, fromBack=false){
  const modal=document.getElementById(id);
  if(modal) modal.classList.remove("show");
-
  if(!fromBack && history.state && history.state.appModal===id){
   history.back();
  }
@@ -730,15 +737,10 @@ document.querySelectorAll(".modal").forEach(modal=>{
  });
 });
 
-// Android/WebView Back: আগে খোলা ক্যাটাগরি/মডাল বন্ধ হবে।
-// মূল পেজে থাকলে তারপর Back দিলে অ্যাপ থেকে বের হওয়ার স্বাভাবিক আচরণ থাকবে।
 history.replaceState({appRoot:true},"");
 window.addEventListener("popstate",function(){
  const visible=[...document.querySelectorAll(".modal.show")];
- if(visible.length){
-  const modal=visible[visible.length-1];
-  closeModal(modal.id,true);
- }
+ if(visible.length) closeModal(visible[visible.length-1].id,true);
 });
 
 function showAll(){
@@ -955,4 +957,4 @@ setInterval(updateDateTime,1000);
 </script>
 
 </body>
-   </html>
+    </html>
